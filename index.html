@@ -1057,7 +1057,7 @@ function trackSocialInteraction(platform) {
                 <h3 class="achievement-counter"><span class="counter">100</span>+</h3>
                 <h4 class="achievement-count-card-sm-title">Happy Clients</h4>
                 <p class="achievement-count-card-text">
-                  Over the years, I’ve had the privilege to work with 1000+ clients worldwide. Their satisfaction and trust have been the foundation of Cornor Tech’s growth and success.
+                  Over the years, I’ve had the privilege to work with 100+ clients worldwide. Their satisfaction and trust have been the foundation of Cornor Tech’s growth and success.
                 </p>
               </div>
             </div>
@@ -1077,7 +1077,7 @@ function trackSocialInteraction(platform) {
     <h3 class="achievement-counter"><span class="counter">50</span>+</h3>
     <h4 class="achievement-count-card-sm-title">Projects Delivered</h4>
     <p class="achievement-count-card-text">
-      Successfully delivered 150+ web, mobile, and software projects for startups, businesses, and individuals—each tailored for performance, design, and user experience.
+      Successfully delivered 50+ web, mobile, and software projects for startups, businesses, and individuals—each tailored for performance, design, and user experience.
     </p>
   </div>
 </div>
@@ -1088,7 +1088,7 @@ function trackSocialInteraction(platform) {
                 <h3 class="achievement-counter"><span class="counter">20</span>+</h3>
                 <h4 class="achievement-count-card-sm-title">Business Consultations</h4>
                 <p class="achievement-count-card-text">
-                  I’ve guided over 200 aspiring entrepreneurs through one-on-one tech and business consultations—many of whom now lead thriving ventures.
+                  I’ve guided over 20 aspiring entrepreneurs through one-on-one tech and business consultations—many of whom now lead thriving ventures.
                 </p>
               </div>
             </div>
@@ -1189,7 +1189,7 @@ function trackSocialInteraction(platform) {
 
     <section id="contact">
       <div class="contact-paper-plane-img">
-        <img src="img/paper-plane-bg.svg" alt="#" />
+        <!-- <img src="img/paper-plane-bg.svg" alt="#" /> -->
       </div>
       <div class="container-fluid">
         <div class="row">
@@ -1328,73 +1328,104 @@ function trackSocialInteraction(platform) {
         </div>
     </div>
 
-    <script>
+  <script>
+    // Run after DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
         // Initialize date/time picker
         flatpickr(".datetimepicker", {
             enableTime: true,
             dateFormat: "Y-m-d H:i",
             minDate: "today",
             time_24hr: true,
+            minuteIncrement: 15,
             placeholder: "Select Date & Time"
         });
 
+        // Handle form submission
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
             sendToWhatsapp();
         });
+    });
 
-        function sendToWhatsapp() {
-            // Replace with your WhatsApp number (without spaces)
-            const number = "+9779867387360";
-            
-            // Get form values
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const topic = document.getElementById('topic').value;
-            const date = document.getElementById('date').value;
-            const message = document.getElementById('message').value;
-            
-            // Validate required fields
-            if (!name || !email || !topic || !date) {
-                document.querySelector('.form-message').textContent = "Please fill in all required fields";
-                document.querySelector('.form-message').style.color = "#e53e3e";
-                return;
-            }
-            
-            // Format date for display
-            const formattedDate = new Date(date).toLocaleString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            
-            // Create WhatsApp message
-            const text = 
-                "🌟 *New Appointment Request* 🌟%0a%0a" +
-                "👤 *Name:* " + encodeURIComponent(name) + "%0a" +
-                "📧 *Email:* " + encodeURIComponent(email) + "%0a" +
-                "📌 *Topic:* " + encodeURIComponent(topic) + "%0a" +
-                "📅 *Date & Time:* " + encodeURIComponent(formattedDate) + "%0a" +
-                "💬 *Message:* " + encodeURIComponent(message) + "%0a%0a" +
-                "Please confirm this appointment at your earliest convenience.";
-            
-            // Create WhatsApp URL
-            const url = "https://wa.me/" + number + "?text=" + text;
-            
-            // Open WhatsApp in a new tab
-            window.open(url, '_blank');
-            
-            // Show success message
-            document.querySelector('.form-message').textContent = "✅ WhatsApp opened! Please send the message to complete your booking.";
-            document.querySelector('.form-message').className = "form-message success-message";
-            
-            // Reset form after submission
-            document.getElementById('appointmentForm').reset();
+    function sendToWhatsapp() {
+        // WhatsApp number (without spaces)
+        const number = "+9779867387360";
+        
+        // Clean the number for URL (remove all non-digit characters)
+        const cleanNumber = number.replace(/\D/g, '');
+        
+        // Get form values
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const topic = document.getElementById('topic').value;
+        const dateInput = document.getElementById('date').value;
+        const message = document.getElementById('message').value;
+        
+        // Get message element
+        const messageElement = document.querySelector('.form-message');
+        
+        // Validate required fields
+        if (!name || !email || !topic || !dateInput) {
+            messageElement.textContent = "Please fill in all required fields";
+            messageElement.style.color = "#e53e3e";
+            messageElement.style.display = "block";
+            return;
         }
-    </script> <br><br><br><br><br>
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            messageElement.textContent = "Please enter a valid email address";
+            messageElement.style.color = "#e53e3e";
+            messageElement.style.display = "block";
+            return;
+        }
+        
+        // Format date for display
+        const dateObj = new Date(dateInput);
+        if (isNaN(dateObj.getTime())) {
+            messageElement.textContent = "Invalid date format";
+            messageElement.style.color = "#e53e3e";
+            messageElement.style.display = "block";
+            return;
+        }
+        
+        const formattedDate = dateObj.toLocaleString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+        
+        // Create WhatsApp message
+        const text = 
+            "🌟 *New Appointment Request* 🌟%0a%0a" +
+            "👤 *Name:* " + encodeURIComponent(name) + "%0a" +
+            "📧 *Email:* " + encodeURIComponent(email) + "%0a" +
+            "📌 *Topic:* " + encodeURIComponent(topic) + "%0a" +
+            "📅 *Date & Time:* " + encodeURIComponent(formattedDate) + "%0a" +
+            "💬 *Message:* " + (message ? encodeURIComponent(message) : "No message") + "%0a%0a" +
+            "Please confirm this appointment at your earliest convenience.";
+        
+        // Create WhatsApp URL
+        const url = "https://wa.me/" + cleanNumber + "?text=" + text;
+        
+        // Open WhatsApp in a new tab
+        window.open(url, 'https://wa.me/9779867897360');
+        
+        // Show success message
+        messageElement.textContent = "✅ WhatsApp opened! Please send the message to complete your booking.";
+        messageElement.style.color = "#38a169";
+        messageElement.style.display = "block";
+        
+        // Reset form after submission
+        document.getElementById('appointmentForm').reset();
+    }
+</script><br><br><br><br><br>
 
 <footer class="footer-area">
         <div class="container-fluid">
